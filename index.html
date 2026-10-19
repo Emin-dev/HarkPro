@@ -59,7 +59,7 @@
       unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
     }
     </style>
-    <style>/* Hark's design tokens and component styles. Each component's rules follow its @component comment. style-gates: data */
+    <style>/* Portfolio design tokens and component styles. Each component's rules follow its @component comment. */
 
 /* @component foundations */
 :root {
@@ -102,8 +102,8 @@
   --mat-thin: light-dark(rgb(255 255 255 / 0.22), rgb(29 29 31 / 0.4));
   --mat-agent: light-dark(rgb(255 255 255 / 0.84), rgb(29 29 31 / 0.66));
   --mat-inverse: color-mix(in srgb, var(--fill-primary) 86%, transparent);  /* the nav: dark on light, light on dark */
-  --hark-blur: blur(50px) saturate(1.6);
-  --hark-shadow: 0 8px 40px #1d1d1f1f;
+  --glass-blur: blur(50px) saturate(1.6);
+  --glass-shadow: 0 8px 40px #1d1d1f1f;
 
   --sans: "GT Standard", "GT Standard L", "Geist", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
   --lh: 1.3;                                            /* every text style is 130% */
@@ -190,8 +190,8 @@ small { font-size: max(var(--size-caption), 0.85em); }
 
 .glass {
   background: var(--mat-inverse);
-  -webkit-backdrop-filter: var(--hark-blur);
-  backdrop-filter: var(--hark-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   border: 1px solid var(--stroke-primary-on);
 }
 .nav {
@@ -205,7 +205,7 @@ small { font-size: max(var(--size-caption), 0.85em); }
   gap: 6px;
   padding: 5px;
   border-radius: var(--r-pill);
-  box-shadow: var(--hark-shadow);
+  box-shadow: var(--glass-shadow);
 }
 .nav :focus-visible { outline-color: var(--fill-primary-on); }
 .seg {
@@ -278,13 +278,13 @@ small { font-size: max(var(--size-caption), 0.85em); }
   border-radius: var(--r-xl);
   background: var(--fill-primary);
   color: var(--text-primary-on);
-  box-shadow: var(--hark-shadow);
+  box-shadow: var(--glass-shadow);
   font: var(--weight-medium) var(--size-body)/1.1 var(--sans);
   text-decoration: none;
 }
-.badge:hover { box-shadow: var(--hark-shadow), inset 0 0 0 100px var(--hover-wash-primary-on); }
-.hark-mark { display: inline-grid; place-items: center; }
-.hark-mark svg { display: block; }
+.badge:hover { box-shadow: var(--glass-shadow), inset 0 0 0 100px var(--hover-wash-primary-on); }
+.brand-mark { display: inline-grid; place-items: center; }
+.brand-mark svg { display: block; }
 @media (max-width: 599px) {
   .foot nav a { display: inline-flex; align-items: center; min-height: var(--tap); min-width: var(--tap); }
   .badge { min-height: var(--tap); }
@@ -380,7 +380,7 @@ tbody th .dot { display: flex; width: fit-content; }
   align-items: flex-end;
   color: var(--hero-text);
   isolation: isolate;
-  box-shadow: var(--hark-shadow);
+  box-shadow: var(--glass-shadow);
   background: var(--hero-surface);
 }
 /* Without a photo the hero is as tall as its copy, so the callout sits beside the copy instead of over it. */
@@ -420,8 +420,8 @@ tbody th .dot { display: flex; width: fit-content; }
   border-radius: var(--r-pill);
   background: var(--hero-glass);
   border: 1px solid var(--hero-glass-stroke);
-  -webkit-backdrop-filter: var(--hark-blur);
-  backdrop-filter: var(--hark-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   font: var(--type-label);
 }
 .hero h1 { font: var(--type-display); letter-spacing: 0; }
@@ -435,8 +435,8 @@ tbody th .dot { display: flex; width: fit-content; }
   padding: 4px 10px;
   border-radius: var(--r-pill);
   background: var(--hero-glass-faint);
-  -webkit-backdrop-filter: var(--hark-blur);
-  backdrop-filter: var(--hark-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   font: var(--type-caption);
   color: var(--hero-text-muted);
 }
@@ -462,10 +462,10 @@ tbody th .dot { display: flex; width: fit-content; }
   padding: 16px 18px 18px;
   border-radius: var(--r-l);
   background: var(--mat-agent);
-  -webkit-backdrop-filter: var(--hark-blur);
-  backdrop-filter: var(--hark-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   border: 1px solid var(--stroke-composer);
-  box-shadow: var(--hark-shadow);
+  box-shadow: var(--glass-shadow);
   color: var(--text-primary);
   font-size: var(--size-small);
 }
@@ -778,7 +778,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
             <p class="hero__meta">Product lead at Rentbutik · Certified Scrum Master · Azerbaijani, English, Russian</p>
           </div>
           <aside class="callout" aria-label="Next step">
-            <p class="callout__head"><span class="hark-mark" data-size="16"></span> Next step</p>
+            <p class="callout__head"><span class="brand-mark" data-size="16"></span> Next step</p>
             <p class="callout__lead"><strong>See my work on GitHub.</strong> 112 public repos, from Rust tools to macOS apps.</p>
             <a class="btn" href="https://github.com/Emin-dev" rel="noopener" target="_blank">GitHub</a>
           </aside>
@@ -959,10 +959,10 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
       <footer class="foot">
         <p>Emin İsmayılov · Baku, Azerbaijan</p>
         <nav aria-label="Back to sections" data-auto=""></nav>
-        <a class="badge" href="https://hark.com/" rel="noopener" target="_blank"><span class="hark-mark"></span><span>built by hark</span></a>
+        <a class="badge" href="https://github.com/Emin-dev/HarkPro" rel="noopener" target="_blank" aria-label="HarkPro on GitHub"><span class="brand-mark"></span><span>HarkPro</span></a>
       </footer>
     </div>
-    <script>/* Page behaviors for Hark's component library: the nav, the theme toggle, tables, line charts and images. style-gates: data */
+    <script>/* Page behaviors for the portfolio: the nav, theme toggle, tables, line charts and images. */
 (function () {
   "use strict";
   var doc = document, root = doc.documentElement;
@@ -1060,19 +1060,19 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
       var mark = function () { if (im.naturalHeight > im.naturalWidth) im.parentNode.classList.add("is-portrait"); };
       if (im.complete) mark(); else im.addEventListener("load", mark);
     });
-    [].slice.call(doc.querySelectorAll(".hark-mark:empty")).forEach(function (m) { m.innerHTML = LOGO.replace(/SIZE/g, m.getAttribute("data-size") || "20"); });
+    [].slice.call(doc.querySelectorAll(".brand-mark:empty")).forEach(function (m) { m.innerHTML = LOGO.replace(/SIZE/g, m.getAttribute("data-size") || "20"); });
   }
 
   function behaviors() {
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var btn = doc.getElementById("theme-btn"), mq = window.matchMedia("(prefers-color-scheme: dark)");
-    try { var saved = localStorage.getItem("hark-theme"); if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved); } catch (e) { /* storage blocked: follow the system theme */ }
+    try { var saved = localStorage.getItem("portfolio-theme"); if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved); } catch (e) { /* storage blocked: follow the system theme */ }
     function current() { var t = root.getAttribute("data-theme"); return t === "light" || t === "dark" ? t : (mq.matches ? "dark" : "light"); }
     function label() { if (btn) btn.setAttribute("aria-label", current() === "dark" ? "Switch to light theme" : "Switch to dark theme"); }
     if (btn) btn.addEventListener("click", function () {
       var next = current() === "dark" ? "light" : "dark";
       root.setAttribute("data-theme", next);
-      try { localStorage.setItem("hark-theme", next); } catch (e) { /* storage blocked: the choice lasts this visit */ }
+      try { localStorage.setItem("portfolio-theme", next); } catch (e) { /* storage blocked: the choice lasts this visit */ }
       label();
     });
     label();

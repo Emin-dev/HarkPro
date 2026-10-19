@@ -1,6 +1,6 @@
 # HarkPro
 
-A static GitHub Pages version of **Emin İsmayılov — Builder & Product Lead**, rebuilt from the Hark page with the same layout, copy, imagery and interactions.
+A static GitHub Pages version of **Emin İsmayılov — Builder & Product Lead**, with the original layout, copy, imagery and interactions.
 
 **Live site:** https://emin-dev.github.io/HarkPro/
 
@@ -43,4 +43,4 @@ All asset paths are relative, so the same files also work from a subdirectory or
 
 ## Design and content
 
-Design and copy are preserved from the original Hark page. Fonts are self-hosted so the page does not depend on Google Fonts at runtime. Geist is © The Geist Project Authors and distributed under the SIL Open Font License; see `assets/fonts/OFL.txt`.
+Design and copy are preserved from the original portfolio page. Fonts are self-hosted so the page does not depend on Google Fonts at runtime. Geist is © The Geist Project Authors and distributed under the SIL Open Font License; see `assets/fonts/OFL.txt`.
