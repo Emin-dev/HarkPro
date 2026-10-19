@@ -7,7 +7,7 @@ A static GitHub Pages version of **Emin İsmayılov — Builder & Product Lead**
 ## What is included
 
 - `index.html` — the complete one-page portfolio, with its CSS, JavaScript and content self-contained except for local fonts and images.
-- `assets/fonts/` — self-hosted Geist and Geist Mono (latin + latin-ext subsets).
+- `assets/fonts/` — self-hosted Geist and Geist Mono (latin + latin-ext subsets), licensed under the SIL Open Font License.
 - `assets/img/` — optimized hero photo, social preview and Apple touch icon.
 - `favicon.svg` — matching site icon.
 - `robots.txt`, `sitemap.xml` — basic search-engine metadata.
@@ -43,4 +43,4 @@ All asset paths are relative, so the same files also work from a subdirectory or
 
 ## Design and content
 
-Design and copy are preserved from the original Hark page. Fonts are self-hosted so the page does not depend on Google Fonts at runtime.
+Design and copy are preserved from the original Hark page. Fonts are self-hosted so the page does not depend on Google Fonts at runtime. Geist is © The Geist Project Authors and distributed under the SIL Open Font License; see `assets/fonts/OFL.txt`.
