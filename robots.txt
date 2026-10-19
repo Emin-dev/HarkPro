@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://emin-dev.github.io/HarkPro/sitemap.xml
