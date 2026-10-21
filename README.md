@@ -1,46 +1,46 @@
 # HarkPro
 
-A static GitHub Pages version of **Emin İsmayılov — Builder & Product Lead**, with the original layout, copy, imagery and interactions.
+Investor-facing portfolio for **Emin İsmayılov**, founder and builder in Baku.
 
 **Live site:** https://emin-dev.github.io/HarkPro/
 
-## What is included
+## Pages
 
-- `index.html` — the complete one-page portfolio, with its CSS, JavaScript and content self-contained except for local fonts and images.
-- `assets/fonts/` — self-hosted Geist and Geist Mono (latin + latin-ext subsets), licensed under the SIL Open Font License.
-- `assets/img/` — optimized hero photo, social preview and Apple touch icon.
-- `favicon.svg` — matching site icon.
-- `robots.txt`, `sitemap.xml` — basic search-engine metadata.
-- `404.html` — redirects unknown paths back to the portfolio.
-- `.nojekyll` — serves the files as-is, without Jekyll processing.
+- `index.html` — Home: one-line intro, six project tiles, at-a-glance facts.
+- `projects.html` — Dot, Studio games, Rust/WASM tools, Adboard, AIHub, crowdfunding, more open source.
+- `about.html` — experience, ventures, education, certifications and languages.
+- `contact.html` — email, LinkedIn and GitHub.
+- `portfolio.pdf` — generated copy of all four pages with clickable links.
 
-No build step, package manager, framework or server-side code is required.
+## Design
+
+Static HTML, CSS and a small vanilla-JS file. No framework and no runtime dependencies. Self-hosted Geist fonts, light/dark themes, responsive bento layout, generated CSS/SVG visuals, reduced-motion support and a skip link. Exactly two "Download PDF" controls: top of Home and bottom of Contact.
 
 ## Run locally
-
-From the repository root:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Then open <http://localhost:8000/>.
+Open <http://localhost:8000/>.
 
-## Deploy with GitHub Pages
+## Build and verify
 
-This repository is configured to publish from the `main` branch at the repository root.
+```bash
+npm install
+npx playwright install chromium
+python3 -m pip install pypdf
+npm run build
+```
 
-For a fresh copy:
+`npm run build` creates `portfolio.pdf` with headless Chromium, checks that all four page markers and clickable internal/external links are present, then checks the four HTML pages for console errors, broken internal links and mobile overflow.
 
-1. Push the files to a GitHub repository.
-2. Open **Settings → Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**.
-4. Select **main** and **/(root)**, then save.
+The GitHub Actions workflow runs the same checks on every push, commits the regenerated `portfolio.pdf`, waits for the GitHub Pages build and verifies the live pages and PDF.
 
-The site will be available at `https://<user>.github.io/<repository>/`.
+## Deploy
 
-All asset paths are relative, so the same files also work from a subdirectory or any static host.
+GitHub Pages publishes from the `main` branch at the repository root (`.nojekyll` disables Jekyll). Push to `main`; the workflow builds the PDF and the Pages build publishes the site.
 
-## Design and content
+## Edit
 
-Design and copy are preserved from the original portfolio page. Fonts are self-hosted so the page does not depend on Google Fonts at runtime. Geist is © The Geist Project Authors and distributed under the SIL Open Font License; see `assets/fonts/OFL.txt`.
+See [docs/HOW-TO-EDIT.md](docs/HOW-TO-EDIT.md). Content lives directly in the four HTML files; shared styling is in `assets/css/site.css` and behavior in `assets/js/site.js`.
