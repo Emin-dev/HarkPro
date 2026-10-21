@@ -1,0 +1,113 @@
+name: Portfolio
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "portfolio.pdf"
+      - "docs/**"
+      - "**.md"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: portfolio-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          python -m pip install --quiet pypdf
+
+      - name: Build PDF
+        run: node scripts/build-pdf.mjs
+
+      - name: Verify PDF
+        run: python scripts/verify-pdf.py
+
+      - name: Check site
+        run: node scripts/site-check.mjs
+
+      - name: Commit PDF
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- portfolio.pdf; then
+            echo "portfolio.pdf is unchanged"
+          else
+            git add portfolio.pdf
+            git commit -m "Build portfolio PDF [skip ci]"
+            git push
+          fi
+
+      - name: Wait for Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          target="$(git rev-parse HEAD)"
+          echo "Waiting for Pages to publish $target"
+          gh api -X POST "repos/${{ github.repository }}/pages/builds" >/dev/null 2>&1 || true
+          for i in $(seq 1 45); do
+            json="$(gh api "repos/${{ github.repository }}/pages/builds/latest")"
+            status="$(printf '%s' "$json" | python -c 'import json,sys; print(json.load(sys.stdin).get("status",""))')"
+            commit="$(printf '%s' "$json" | python -c 'import json,sys; print(json.load(sys.stdin).get("commit",""))')"
+            echo "Pages: $status $commit"
+            if [ "$status" = "built" ] && [ "$commit" = "$target" ]; then
+              exit 0
+            fi
+            if [ "$status" = "errored" ]; then
+              exit 1
+            fi
+            sleep 10
+          done
+          echo "Pages did not publish the expected commit"
+          exit 1
+
+      - name: Verify live site
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          base="https://emin-dev.github.io/HarkPro"
+          for path in "" "projects.html" "about.html" "contact.html"; do
+            code="$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 30 "$base/$path")"
+            echo "$code /$path"
+            test "$code" = "200"
+          done
+          ok=0
+          for i in $(seq 1 12); do
+            if curl -fsSL --max-time 30 "$base/portfolio.pdf" -o /tmp/live-portfolio.pdf && python scripts/verify-pdf.py /tmp/live-portfolio.pdf; then
+              ok=1
+              break
+            fi
+            sleep 5
+          done
+          test "$ok" = "1"
+          curl -fsSL --max-time 30 "$base/projects.html" | grep -q "Things I"
+          echo "Live site and PDF verified"
