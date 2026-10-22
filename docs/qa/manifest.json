@@ -1,5 +1,5 @@
 {
-  "pdfBytes": 613435,
+  "pdfBytes": 615536,
   "entries": [
     {
       "kind": "site",
@@ -101,13 +101,13 @@
       "kind": "pdf",
       "page": "1",
       "file": "pdf-page-1.png",
-      "bytes": 198653
+      "bytes": 198668
     },
     {
       "kind": "pdf",
       "page": "2",
       "file": "pdf-page-2.png",
-      "bytes": 186224
+      "bytes": 186225
     },
     {
       "kind": "pdf",
