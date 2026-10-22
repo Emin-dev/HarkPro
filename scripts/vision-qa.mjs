@@ -7,7 +7,6 @@ import { join, resolve } from "node:path";
 const root = resolve(process.cwd());
 const qaDir = join(root, "docs", "qa");
 const preferredModel = process.env.VISION_QA_MODEL || "opencode-go/qwen3.8-max";
-const models = [...new Set([preferredModel, "opencode-go/qwen3.8-flash"])];
 const candidates = [
   process.env.OPENCODE_BIN,
   join(process.env.HOME || "", ".opencode", "bin", "opencode"),
@@ -29,6 +28,40 @@ function findOpencode() {
     if (existsSync(candidate)) return candidate;
   }
   return null;
+}
+
+function availableModels(bin) {
+  const result = spawnSync(bin, ["models"], { encoding: "utf8", timeout: 30_000 });
+  if (result.status !== 0) return [];
+  return result.stdout
+    .split("\n")
+    .map((line) => line.replace(/\x1b\[[0-9;]*m/g, "").trim())
+    .filter((line) => /^[A-Za-z0-9_.-]+(?:\/[A-Za-z0-9_.:-]+)?$/.test(line));
+}
+
+function chooseModels(bin) {
+  const available = availableModels(bin);
+  const wanted = [
+    preferredModel,
+    "opencode-go/qwen3.8-max",
+    "opencode/qwen3.8-max",
+    "qwen3.8-max",
+    "opencode-go/qwen3.8-flash",
+    "opencode/qwen3.8-flash",
+    "qwen3.8-flash"
+  ];
+  const chosen = [];
+  for (const name of wanted) {
+    if (available.includes(name)) chosen.push(name);
+  }
+  for (const name of available) {
+    if (/qwen3\.8-max$/i.test(name)) chosen.push(name);
+  }
+  for (const name of available) {
+    if (/qwen3\.8-flash$/i.test(name)) chosen.push(name);
+  }
+  if (!chosen.length) chosen.push(...wanted.slice(0, 2));
+  return [...new Set(chosen)];
 }
 
 function parseAnswer(stdout) {
@@ -77,10 +110,13 @@ async function main() {
   const results = [];
   let unavailable = false;
 
+  const models = bin ? chooseModels(bin) : [];
+
   if (!bin) {
     unavailable = true;
     results.push({ page: "all", ok: false, unavailable: true, error: "opencode CLI not found" });
   } else {
+    console.log(`Models: ${models.join(", ")}`);
     const tmp = await mkdtemp(join(tmpdir(), "vision-qa-"));
     for (const page of pages) {
       const sources = labels[page].map((label, index) => {
@@ -124,6 +160,8 @@ async function main() {
     }
   }
 
+  const answered = results.some((result) => result.ok);
+  if (!answered) unavailable = true;
   const clean = results.length === pages.length && results.every((result) => result.ok && /^CLEAN\b/i.test(result.answer));
   const report = {
     preferredModel,
@@ -132,6 +170,14 @@ async function main() {
     unavailable,
     results
   };
+
+  if (unavailable) {
+    await writeFile(join(qaDir, "vision-qa-unavailable.json"), `${JSON.stringify(report, null, 2)}\n`);
+    console.log("VISION-QA-NEEDED");
+    console.log("PNGs are in docs/qa/. No qwen3.8 vision model could review them here.");
+    return;
+  }
+
   await writeFile(join(qaDir, "vision-qa.json"), `${JSON.stringify(report, null, 2)}\n`);
 
   const lines = [
@@ -149,12 +195,6 @@ async function main() {
     lines.push("");
   }
   await writeFile(join(qaDir, "VISION-QA.md"), `${lines.join("\n")}\n`);
-
-  if (unavailable) {
-    console.log("VISION-QA-NEEDED");
-    console.log("PNGs are in docs/qa/. The qwen3.8-max vision check could not run here.");
-    return;
-  }
   if (!clean) {
     console.error("FAIL: vision QA found issues");
     process.exitCode = 1;
