@@ -1,5 +1,5 @@
 {
-  "pdfBytes": 616543,
+  "pdfBytes": 613415,
   "entries": [
     {
       "kind": "site",
@@ -7,7 +7,7 @@
       "viewport": "1440",
       "theme": "light",
       "file": "site-home-1440-light.png",
-      "bytes": 346156
+      "bytes": 346331
     },
     {
       "kind": "site",
@@ -15,7 +15,7 @@
       "viewport": "1440",
       "theme": "dark",
       "file": "site-home-1440-dark.png",
-      "bytes": 362341
+      "bytes": 363040
     },
     {
       "kind": "site",
@@ -23,7 +23,7 @@
       "viewport": "390",
       "theme": "light",
       "file": "site-home-390-light.png",
-      "bytes": 234913
+      "bytes": 234783
     },
     {
       "kind": "site",
@@ -31,7 +31,7 @@
       "viewport": "390",
       "theme": "dark",
       "file": "site-home-390-dark.png",
-      "bytes": 247511
+      "bytes": 247428
     },
     {
       "kind": "site",
@@ -39,7 +39,7 @@
       "viewport": "1440",
       "theme": "light",
       "file": "site-projects-1440-light.png",
-      "bytes": 254955
+      "bytes": 255323
     },
     {
       "kind": "site",
@@ -47,7 +47,7 @@
       "viewport": "1440",
       "theme": "dark",
       "file": "site-projects-1440-dark.png",
-      "bytes": 272776
+      "bytes": 273292
     },
     {
       "kind": "site",
@@ -55,7 +55,7 @@
       "viewport": "390",
       "theme": "light",
       "file": "site-projects-390-light.png",
-      "bytes": 195721
+      "bytes": 195585
     },
     {
       "kind": "site",
@@ -63,7 +63,7 @@
       "viewport": "390",
       "theme": "dark",
       "file": "site-projects-390-dark.png",
-      "bytes": 209851
+      "bytes": 209755
     },
     {
       "kind": "site",
@@ -71,7 +71,7 @@
       "viewport": "1440",
       "theme": "light",
       "file": "site-about-1440-light.png",
-      "bytes": 179552
+      "bytes": 179874
     },
     {
       "kind": "site",
@@ -79,7 +79,7 @@
       "viewport": "1440",
       "theme": "dark",
       "file": "site-about-1440-dark.png",
-      "bytes": 198779
+      "bytes": 199785
     },
     {
       "kind": "site",
@@ -87,7 +87,7 @@
       "viewport": "390",
       "theme": "light",
       "file": "site-about-390-light.png",
-      "bytes": 140496
+      "bytes": 140481
     },
     {
       "kind": "site",
@@ -95,19 +95,19 @@
       "viewport": "390",
       "theme": "dark",
       "file": "site-about-390-dark.png",
-      "bytes": 154252
+      "bytes": 154162
     },
     {
       "kind": "pdf",
       "page": "1",
       "file": "pdf-page-1.png",
-      "bytes": 198658
+      "bytes": 198667
     },
     {
       "kind": "pdf",
       "page": "2",
       "file": "pdf-page-2.png",
-      "bytes": 186257
+      "bytes": 186224
     },
     {
       "kind": "pdf",
