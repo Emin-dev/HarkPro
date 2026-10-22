@@ -85,8 +85,7 @@ jobs:
         run: |
           target="$(git rev-parse HEAD)"
           echo "Waiting for Pages to publish $target"
-          gh api -X POST "repos/${{ github.repository }}/pages/builds" >/dev/null 2>&1 || true
-          for i in $(seq 1 45); do
+          for i in $(seq 1 60); do
             json="$(gh api "repos/${{ github.repository }}/pages/builds/latest")"
             status="$(printf '%s' "$json" | python -c 'import json,sys; print(json.load(sys.stdin).get("status",""))')"
             commit="$(printf '%s' "$json" | python -c 'import json,sys; print(json.load(sys.stdin).get("commit",""))')"
