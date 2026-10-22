@@ -1,0 +1,157 @@
+{
+  "pdfBytes": 719597,
+  "entries": [
+    {
+      "kind": "site",
+      "page": "home",
+      "viewport": "1440",
+      "theme": "light",
+      "file": "site-home-1440-light.png",
+      "bytes": 347003
+    },
+    {
+      "kind": "site",
+      "page": "home",
+      "viewport": "1440",
+      "theme": "dark",
+      "file": "site-home-1440-dark.png",
+      "bytes": 363281
+    },
+    {
+      "kind": "site",
+      "page": "home",
+      "viewport": "390",
+      "theme": "light",
+      "file": "site-home-390-light.png",
+      "bytes": 236345
+    },
+    {
+      "kind": "site",
+      "page": "home",
+      "viewport": "390",
+      "theme": "dark",
+      "file": "site-home-390-dark.png",
+      "bytes": 249342
+    },
+    {
+      "kind": "site",
+      "page": "projects",
+      "viewport": "1440",
+      "theme": "light",
+      "file": "site-projects-1440-light.png",
+      "bytes": 256981
+    },
+    {
+      "kind": "site",
+      "page": "projects",
+      "viewport": "1440",
+      "theme": "dark",
+      "file": "site-projects-1440-dark.png",
+      "bytes": 274518
+    },
+    {
+      "kind": "site",
+      "page": "projects",
+      "viewport": "390",
+      "theme": "light",
+      "file": "site-projects-390-light.png",
+      "bytes": 198544
+    },
+    {
+      "kind": "site",
+      "page": "projects",
+      "viewport": "390",
+      "theme": "dark",
+      "file": "site-projects-390-dark.png",
+      "bytes": 212730
+    },
+    {
+      "kind": "site",
+      "page": "about",
+      "viewport": "1440",
+      "theme": "light",
+      "file": "site-about-1440-light.png",
+      "bytes": 172209
+    },
+    {
+      "kind": "site",
+      "page": "about",
+      "viewport": "1440",
+      "theme": "dark",
+      "file": "site-about-1440-dark.png",
+      "bytes": 191703
+    },
+    {
+      "kind": "site",
+      "page": "about",
+      "viewport": "390",
+      "theme": "light",
+      "file": "site-about-390-light.png",
+      "bytes": 133546
+    },
+    {
+      "kind": "site",
+      "page": "about",
+      "viewport": "390",
+      "theme": "dark",
+      "file": "site-about-390-dark.png",
+      "bytes": 147417
+    },
+    {
+      "kind": "site",
+      "page": "contact",
+      "viewport": "1440",
+      "theme": "light",
+      "file": "site-contact-1440-light.png",
+      "bytes": 134129
+    },
+    {
+      "kind": "site",
+      "page": "contact",
+      "viewport": "1440",
+      "theme": "dark",
+      "file": "site-contact-1440-dark.png",
+      "bytes": 153425
+    },
+    {
+      "kind": "site",
+      "page": "contact",
+      "viewport": "390",
+      "theme": "light",
+      "file": "site-contact-390-light.png",
+      "bytes": 100092
+    },
+    {
+      "kind": "site",
+      "page": "contact",
+      "viewport": "390",
+      "theme": "dark",
+      "file": "site-contact-390-dark.png",
+      "bytes": 112522
+    },
+    {
+      "kind": "pdf",
+      "page": "1",
+      "file": "pdf-page-1.png",
+      "bytes": 199993
+    },
+    {
+      "kind": "pdf",
+      "page": "2",
+      "file": "pdf-page-2.png",
+      "bytes": 188233
+    },
+    {
+      "kind": "pdf",
+      "page": "3",
+      "file": "pdf-page-3.png",
+      "bytes": 133905
+    },
+    {
+      "kind": "pdf",
+      "page": "4",
+      "file": "pdf-page-4.png",
+      "bytes": 89217
+    }
+  ]
+}

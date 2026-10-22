@@ -1,20 +1,28 @@
 # HarkPro
 
-Investor-facing portfolio for **Emin İsmayılov**, founder and builder in Baku.
+Public portfolio for **Emin İsmayılov**, published with GitHub Pages.
 
 **Live site:** https://emin-dev.github.io/HarkPro/
 
+The site only uses information from Emin's public GitHub account, public
+repositories and their READMEs, plus the email, GitHub and LinkedIn contact
+links allowed by the brief. Every substantive claim is mapped to a public source in
+[docs/CONTENT-SOURCES.md](docs/CONTENT-SOURCES.md).
+
 ## Pages
 
-- `index.html` — Home: one-line intro, six project tiles, at-a-glance facts.
-- `projects.html` — Dot, Studio games, Rust/WASM tools, Adboard, AIHub, crowdfunding, more open source.
-- `about.html` — experience, ventures, education, certifications and languages.
+- `index.html` — Home: intro, three selected public projects, public facts.
+- `projects.html` — Dot, AccessProof and Locale only.
+- `about.html` — public repositories, how the projects are built, tool stack.
 - `contact.html` — email, LinkedIn and GitHub.
-- `portfolio.pdf` — generated copy of all four pages with clickable links.
+- `portfolio.pdf` — generated four-page copy of the site with clickable links.
 
 ## Design
 
-Static HTML, CSS and a small vanilla-JS file. No framework and no runtime dependencies. Self-hosted Geist fonts, light/dark themes, responsive bento layout, generated CSS/SVG visuals, reduced-motion support and a skip link. Exactly two "Download PDF" controls: top of Home and bottom of Contact.
+Static HTML, CSS and a small vanilla-JS file. No framework and no runtime
+dependencies. Self-hosted Geist fonts, light/dark themes, responsive bento
+layout, generated CSS/SVG visuals, reduced-motion support and a skip link.
+Exactly two "Download PDF" controls: top of Home and bottom of Contact.
 
 ## Run locally
 
@@ -29,18 +37,34 @@ Open <http://localhost:8000/>.
 ```bash
 npm install
 npx playwright install chromium
-python3 -m pip install pypdf
+python3 -m pip install pypdf pillow
 npm run build
 ```
 
-`npm run build` creates `portfolio.pdf` with headless Chromium, checks that all four page markers and clickable internal/external links are present, then checks the four HTML pages for console errors, broken internal links and mobile overflow.
+`npm run build` installs the bundled static Geist TTFs into
+`~/.fonts/harkpro-portfolio`, creates `portfolio.pdf` with headless Chromium,
+checks that all four section pages exist with clickable internal and external
+links, then checks the HTML pages in light and dark themes at 1440 px and 390 px
+for console errors, broken links, missing anchors and horizontal overflow. It
+also rejects private or out-of-scope content that must not appear.
 
-The GitHub Actions workflow runs the same checks on every push, commits the regenerated `portfolio.pdf`, waits for the GitHub Pages build and verifies the live pages and PDF.
+## Visual QA
+
+```bash
+npm run qa
+```
+
+`qa:render` writes every site page at 1440 and 390 px in light and dark mode,
+renders all four PDF pages to PNG under `docs/qa/`, refreshes
+`assets/img/preview.jpg`, and records a manifest. `qa:vision` needs the OpenCode
+CLI (`npm install -g opencode-ai@1.19.3`) and Pillow. It sends the images to
+`opencode-go/qwen3.8-max` (falling back to `qwen3.8-flash`) and fails on any
+reported overlap, clipping, blank page, broken image or contrast problem. If no
+vision model is available, it writes the PNGs and prints `VISION-QA-NEEDED`.
 
 ## Deploy
 
-GitHub Pages publishes from the `main` branch at the repository root (`.nojekyll` disables Jekyll). Push to `main`; the workflow builds the PDF and the Pages build publishes the site.
-
-## Edit
-
-See [docs/HOW-TO-EDIT.md](docs/HOW-TO-EDIT.md). Content lives directly in the four HTML files; shared styling is in `assets/css/site.css` and behavior in `assets/js/site.js`.
+GitHub Pages publishes from the `main` branch at the repository root
+(`.nojekyll` disables Jekyll). Push to `main`; the workflow builds and verifies
+the PDF, runs visual QA, commits the generated PDF and QA images, waits for the
+Pages build and verifies the live pages and PDF.

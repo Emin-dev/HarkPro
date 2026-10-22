@@ -4,9 +4,12 @@
   "private": true,
   "description": "Static portfolio for Emin İsmayılov, with a build-time PDF export.",
   "scripts": {
-    "pdf": "node scripts/build-pdf.mjs",
+    "pdf": "bash scripts/install-fonts.sh && node scripts/build-pdf.mjs",
     "verify:pdf": "python3 scripts/verify-pdf.py",
     "check": "node scripts/site-check.mjs",
+    "qa:render": "node scripts/qa-render.mjs",
+    "qa:vision": "node scripts/vision-qa.mjs",
+    "qa": "npm run qa:render && npm run qa:vision",
     "build": "npm run pdf && npm run verify:pdf && npm run check"
   },
   "devDependencies": {

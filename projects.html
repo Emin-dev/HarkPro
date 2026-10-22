@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Projects &amp; ventures — Emin İsmayılov</title>
-  <meta name="description" content="Dot, Studio games, Rust and WebAssembly tools, and new product ideas from Emin İsmayılov in Baku.">
+  <title>Projects — Emin İsmayılov</title>
+  <meta name="description" content="Public projects by Emin İsmayılov: Dot for macOS, AccessProof and Locale.">
   <meta name="author" content="Emin İsmayılov">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
@@ -16,13 +16,13 @@
   <link rel="stylesheet" href="assets/css/site.css">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Emin İsmayılov">
-  <meta property="og:title" content="Projects &amp; ventures — Emin İsmayılov">
-  <meta property="og:description" content="Local-first AI, small games, Rust and WebAssembly tools, and new product ideas.">
+  <meta property="og:title" content="Projects — Emin İsmayılov">
+  <meta property="og:description" content="Dot for macOS, AccessProof and Locale — public work from GitHub.">
   <meta property="og:url" content="https://emin-dev.github.io/HarkPro/projects.html">
   <meta property="og:image" content="https://emin-dev.github.io/HarkPro/assets/img/preview.jpg">
   <meta property="og:image:width" content="2400">
   <meta property="og:image:height" content="1260">
-  <meta property="og:image:alt" content="Emin İsmayılov — founder and builder in Baku">
+  <meta property="og:image:alt" content="Emin İsmayılov — local-first tools and small games">
   <meta name="twitter:card" content="summary_large_image">
   <script>
     (function () {
@@ -57,27 +57,28 @@
 
     <main id="main">
       <header class="page-head reveal">
-        <p class="eyebrow">Projects &amp; ventures</p>
-        <h1 class="page-title">Things I’m<br>building.</h1>
-        <p class="lede">Some are shipped. Some are live. Some are ideas I can’t stop thinking about.</p>
+        <p class="eyebrow">Projects</p>
+        <h1 class="page-title">Public work,<br>shipped.</h1>
+        <p class="lede">Three apps from my public GitHub: a macOS companion, a browser accessibility scanner, and a multilingual release review desk.</p>
       </header>
 
       <div class="bento project-grid">
         <article class="tile tile--feature reveal" id="dot">
           <div class="tile-top">
-            <span class="tag tag--live">Shipped</span>
+            <span class="tag tag--live">Shipped · v1.1.2</span>
             <a class="arrow" href="https://github.com/Emin-dev/Dot" rel="noopener" aria-label="Dot on GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
           </div>
           <h2>Dot</h2>
-          <p>A floating AI companion for macOS. Dot listens when you click, speaks with a local voice, and can use screen context only for the conversation you started. The model — Qwen3.8 27B — runs entirely on your Mac.</p>
+          <p>Dot is a native macOS floating companion. Click to talk, click again to interrupt. English transcription runs locally with Whisper, the voice is a local Kokoro helper, and screen context is used only for the conversation you started. The Qwen3.8 27B Q4 model runs on your Mac.</p>
           <div class="feature-body">
             <div>
               <dl class="feature-stats">
-                <div><dt>Model</dt><dd>Qwen3.8 27B · local</dd></div>
-                <div><dt>Voice</dt><dd>On-device</dd></div>
+                <div><dt>Model</dt><dd>Qwen3.8 27B Q4 · local</dd></div>
+                <div><dt>Voice</dt><dd>Kokoro · on-device</dd></div>
                 <div><dt>Privacy</dt><dd>Screen context never uploaded</dd></div>
-                <div><dt>Platform</dt><dd>macOS</dd></div>
+                <div><dt>Platform</dt><dd>macOS 27+ · M5 Pro / 48 GB</dd></div>
               </dl>
+              <p class="fine">The public build is ad-hoc signed and not notarised yet.</p>
               <div class="link-row">
                 <a class="btn btn--primary btn--small" href="https://github.com/Emin-dev/Dot" rel="noopener">Dot on GitHub</a>
                 <a class="btn btn--ghost btn--small" href="https://github.com/Emin-dev/Dot/releases/latest" rel="noopener">Latest release</a>
@@ -87,93 +88,60 @@
           </div>
         </article>
 
-        <article class="tile tile--side reveal" id="studio">
+        <article class="tile tile--project reveal" id="accessproof">
           <div class="tile-top">
             <span class="tag tag--live">Live</span>
-            <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            <a class="arrow" href="https://emin-dev.github.io/accessproof/" rel="noopener" aria-label="Open AccessProof"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
           </div>
-          <div class="games-grid" aria-hidden="true">
-            <span class="game-swatch">☕</span>
-            <span class="game-swatch">◇</span>
-            <span class="game-swatch">⇄</span>
-            <span class="game-swatch">Aa</span>
+          <div class="contrast-demo" aria-hidden="true">
+            <div class="swatch swatch--a"><span>Aa</span><b>4.8:1</b></div>
+            <div class="swatch swatch--b"><span>Aa</span><b>Fail</b></div>
+            <span class="check-pill">WCAG AA</span>
           </div>
-          <h2>Studio</h2>
-          <p>A catalog of small, honest games and web products. Vanilla JavaScript, zero dependencies, no ads. Cozy Nook, Quiet Tiles, Ruleshift and Scriver-i-şkola are live.</p>
+          <h2>AccessProof</h2>
+          <p>AccessProof runs the vendored axe-core engine locally in your browser. It checks pasted HTML for WCAG A/AA failures, adds best-practice advice, and flags common overlay signatures — without uploading the markup.</p>
+          <dl class="feature-stats compact">
+            <div><dt>Engine</dt><dd>axe-core 4.14.0</dd></div>
+            <div><dt>Sandbox</dt><dd>No same-origin</dd></div>
+            <div><dt>Live</dt><dd>GitHub Pages</dd></div>
+          </dl>
           <div class="link-row">
-            <a class="btn btn--ghost btn--small" href="https://emin-dev.github.io/Studio/" rel="noopener">Studio hub</a>
-            <a class="btn btn--ghost btn--small" href="https://emin-dev.github.io/CozyNook/" rel="noopener">Play Cozy Nook</a>
+            <a class="btn btn--primary btn--small" href="https://emin-dev.github.io/accessproof/" rel="noopener">Open AccessProof</a>
+            <a class="btn btn--ghost btn--small" href="https://github.com/Emin-dev/accessproof" rel="noopener">Source</a>
           </div>
         </article>
 
-        <article class="tile tile--project-wide reveal" id="rust">
+        <article class="tile tile--project reveal" id="locale">
           <div class="tile-top">
-            <span class="tag tag--open">Open source</span>
-            <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            <span class="tag tag--open">Live demo</span>
+            <a class="arrow" href="https://project-refiy.vercel.app/" rel="noopener" aria-label="Open the Locale demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
           </div>
-          <h2>Rust + WebAssembly</h2>
-          <p>Local-first tools that do their work in the browser: no upload, no account, no server round-trip. Built with Rust compiled to WebAssembly.</p>
-          <div class="tool-list">
-            <div class="tool"><strong>locale</strong><div><a href="https://project-refiy.vercel.app" rel="noopener">live</a><a href="https://github.com/Emin-dev/locale" rel="noopener">code</a></div></div>
-            <div class="tool"><strong>deliver</strong><div><a href="https://project-e257o.vercel.app" rel="noopener">live</a><a href="https://github.com/Emin-dev/deliver" rel="noopener">code</a></div></div>
-            <div class="tool"><strong>shift</strong><div><a href="https://shift-eminai.vercel.app" rel="noopener">live</a><a href="https://github.com/Emin-dev/shift" rel="noopener">code</a></div></div>
-            <div class="tool"><strong>gather</strong><div><a href="https://project-41uad.vercel.app" rel="noopener">live</a><a href="https://github.com/Emin-dev/gather" rel="noopener">code</a></div></div>
-            <div class="tool"><strong>phototrace</strong><div><a href="https://project-iasva.vercel.app" rel="noopener">live</a><a href="https://github.com/Emin-dev/phototrace" rel="noopener">code</a></div></div>
+          <div class="locale-demo" aria-hidden="true">
+            <div class="locale-langs"><span>EN</span><span>AZ</span><span>RU</span><span>TR</span></div>
+            <div class="locale-cells">
+              <i class="ok"></i><i class="ok"></i><i class="warn"></i><i class="ok"></i>
+              <i class="ok"></i><i class="warn"></i><i class="ok"></i><i class="ok"></i>
+              <i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="warn"></i>
+            </div>
+            <span class="locale-caption">coverage view</span>
           </div>
-        </article>
-
-        <article class="tile tile--project reveal" id="adboard">
-          <div class="tile-top">
-            <span class="tag tag--concept">Concept</span>
-            <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
-          </div>
-          <div class="ad-visual" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            <span class="coin">+1</span>
-          </div>
-          <h2>Adboard</h2>
-          <p>Reward-for-watching-ads. Instead of interrupting people, Adboard lets them choose a short ad and receive a real reward for the attention.</p>
-        </article>
-
-        <article class="tile tile--project reveal" id="aihub">
-          <div class="tile-top">
-            <span class="tag tag--concept">Concept</span>
-            <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
-          </div>
-          <div class="ai-stack" aria-hidden="true"><span></span><span></span><span></span></div>
-          <h2>AIHub</h2>
-          <p>A calm home for local AI: find a model, see what runs on your hardware, and open the right tool without the noise.</p>
-        </article>
-
-        <article class="tile tile--project reveal" id="more">
-          <div class="tile-top">
-            <span class="tag tag--open">Open source</span>
-            <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
-          </div>
-          <div class="glyph" aria-hidden="true">&lt;/&gt;</div>
-          <h2>More tools</h2>
-          <p>Accessibility checks, small browser utilities and a native macOS research workspace.</p>
+          <h2>Locale</h2>
+          <p>Locale is a local-only review desk for multilingual releases. A Rust core validates coverage and binds decisions to evidence fingerprints; the same core runs as a native CLI or WebAssembly in the browser. The demo project is synthetic.</p>
+          <dl class="feature-stats compact">
+            <div><dt>Core</dt><dd>Rust + WASM</dd></div>
+            <div><dt>State</dt><dd>Tab memory only</dd></div>
+            <div><dt>License</dt><dd>MIT</dd></div>
+          </dl>
           <div class="link-row">
-            <a class="btn btn--ghost btn--small" href="https://github.com/Emin-dev/accessproof" rel="noopener">accessproof</a>
-            <a class="btn btn--ghost btn--small" href="https://github.com/Emin-dev/toolbench" rel="noopener">toolbench</a>
-            <a class="btn btn--ghost btn--small" href="https://github.com/Emin-dev/deepdesk" rel="noopener">deepdesk</a>
+            <a class="btn btn--primary btn--small" href="https://project-refiy.vercel.app/" rel="noopener">Open the demo</a>
+            <a class="btn btn--ghost btn--small" href="https://github.com/Emin-dev/locale" rel="noopener">Source</a>
           </div>
-        </article>
-
-        <article class="tile tile--project reveal" id="crowdfunding">
-          <div class="tile-top">
-            <span class="tag tag--concept">Idea</span>
-            <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
-          </div>
-          <div class="crowd-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-          <h2>Crowdfunding</h2>
-          <p>A platform for local makers to raise a first round, pre-sell the thing they are building, and keep backers close to the work.</p>
         </article>
       </div>
     </main>
 
     <footer class="foot">
-      <p>© <span data-year>2026</span> Emin İsmayılov · Baku, Azerbaijan</p>
+      <p>© <span data-year>2026</span> Emin İsmayılov</p>
       <nav aria-label="Footer">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>

@@ -21,7 +21,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,12 +41,14 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils fontconfig
           npm ci
           npx playwright install --with-deps chromium
-          python -m pip install --quiet pypdf
+          python -m pip install --quiet pypdf pillow
 
       - name: Build PDF
-        run: node scripts/build-pdf.mjs
+        run: npm run pdf
 
       - name: Verify PDF
         run: python scripts/verify-pdf.py
@@ -54,16 +56,25 @@ jobs:
       - name: Check site
         run: node scripts/site-check.mjs
 
-      - name: Commit PDF
+      - name: Install OpenCode for vision QA
+        continue-on-error: true
+        run: npm install -g opencode-ai@1.19.3
+
+      - name: Render and vision QA
+        env:
+          VISION_QA_MODEL: opencode-go/qwen3.8-max
+        run: npm run qa
+
+      - name: Commit PDF and QA evidence
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- portfolio.pdf; then
-            echo "portfolio.pdf is unchanged"
+          if git diff --quiet -- portfolio.pdf assets/img/preview.jpg docs/qa; then
+            echo "Generated PDF and QA evidence are unchanged"
           else
-            git add portfolio.pdf
-            git commit -m "Build portfolio PDF [skip ci]"
+            git add portfolio.pdf assets/img/preview.jpg docs/qa
+            git commit -m "Build PDF and QA screenshots [skip ci]"
             git push
           fi
 
@@ -109,5 +120,5 @@ jobs:
             sleep 5
           done
           test "$ok" = "1"
-          curl -fsSL --max-time 30 "$base/projects.html" | grep -q "Things I"
+          curl -fsSL --max-time 30 "$base/projects.html" | grep -q "Public work"
           echo "Live site and PDF verified"

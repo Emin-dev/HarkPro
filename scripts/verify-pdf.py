@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the generated portfolio PDF contains every page and clickable links."""
+"""Verify the generated portfolio PDF contains four pages and clickable links."""
 from __future__ import annotations
 
 import sys
@@ -21,22 +21,37 @@ def main() -> None:
         fail("portfolio.pdf is unexpectedly small")
 
     reader = PdfReader(str(pdf_path))
-    if len(reader.pages) < 4:
-        fail(f"expected at least 4 PDF pages, found {len(reader.pages)}")
+    if len(reader.pages) != 4:
+        fail(f"expected exactly 4 PDF pages (one per section), found {len(reader.pages)}")
 
-    text = "\n".join((page.extract_text() or "") for page in reader.pages)
-    normalized = " ".join(text.split()).lower()
+    page_texts = [" ".join((page.extract_text() or "").split()) for page in reader.pages]
+    normalized = [text.lower() for text in page_texts]
 
     markers = {
-        "home": ["emin", "builder", "the things i build"],
-        "projects": ["projects & ventures", "dot", "rust + webassembly", "adboard", "aihub"],
-        "about": ["about & experience", "rentbutik", "mechatronics", "scrum master"],
-        "contact": ["contact", "eminpromax@icloud.com", "linkedin", "github"],
+        0: ["home", "emin", "built in the open", "dot", "accessproof", "locale"],
+        1: ["projects", "public work", "dot", "accessproof", "locale", "qwen"],
+        2: ["about", "public by default", "113 public repositories", "local-first", "toolbox"],
+        3: ["contact", "say hello", "eminpromax@icloud.com", "linkedin", "github"],
     }
-    for page_name, needles in markers.items():
+    for index, needles in markers.items():
+        if len(page_texts[index]) < 120:
+            fail(f"page {index + 1}: looks blank or too short ({len(page_texts[index])} chars)")
         for needle in needles:
-            if needle.lower() not in normalized:
-                fail(f"{page_name}: missing text marker {needle!r}")
+            if needle not in normalized[index]:
+                fail(f"page {index + 1}: missing text marker {needle!r}")
+
+    forbidden = [
+        "rent" + "butik",
+        "ad" + "board",
+        "ai" + "hub",
+        "crowd" + "funding",
+        "mecha" + "tronics",
+        "scrum " + "master",
+    ]
+    joined = " ".join(normalized)
+    for needle in forbidden:
+        if needle in joined:
+            fail(f"contains removed private content {needle!r}")
 
     internal = 0
     external = 0
@@ -57,9 +72,9 @@ def main() -> None:
                 external += 1
                 external_uris.add(str(action["/URI"]))
 
-    if internal < 4:
-        fail(f"expected clickable internal links, found {internal}")
-    if external < 5:
+    if internal < 12:
+        fail(f"expected clickable internal page links on every page, found {internal}")
+    if external < 8:
         fail(f"expected clickable external links, found {external}")
 
     known = set(reader.named_destinations.keys())
@@ -70,12 +85,14 @@ def main() -> None:
     required_external = [
         "github.com/Emin-dev",
         "github.com/Emin-dev/Dot",
+        "github.com/Emin-dev/accessproof",
+        "github.com/Emin-dev/locale",
         "linkedin.com/in/",
         "mailto:eminpromax@icloud.com",
     ]
-    joined = " ".join(external_uris)
+    joined_uris = " ".join(external_uris)
     for needle in required_external:
-        if needle not in joined:
+        if needle not in joined_uris:
             fail(f"missing clickable external link {needle!r}")
 
     print(

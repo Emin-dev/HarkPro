@@ -1,6 +1,6 @@
 import { chromium } from "playwright";
 import { createServer } from "node:http";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, rm, writeFile } from "node:fs/promises";
 import { extname, join, normalize, resolve } from "node:path";
 
 const root = resolve(process.cwd());
@@ -63,7 +63,7 @@ function rewriteLinks(html) {
     if (pathPart === "projects.html" || pathPart === "./projects.html") return `href="${target || "#projects"}"`;
     if (pathPart === "about.html" || pathPart === "./about.html") return `href="${target || "#about"}"`;
     if (pathPart === "contact.html" || pathPart === "./contact.html") return `href="${target || "#contact"}"`;
-    if (pathPart === "portfolio.pdf") return `href="#contact"`;
+    if (pathPart === "portfolio.pdf") return 'href="https://emin-dev.github.io/HarkPro/portfolio.pdf"';
     return full;
   });
 }
@@ -73,7 +73,6 @@ const extraPrintCss = `
   .pdf-doc + .pdf-doc { margin-top: 0; }
   .pdf-doc .page-head { padding-top: 4mm; }
   .pdf-doc .hero { min-height: 0; }
-  .pdf-doc .pdf-cta { display: none !important; }
   .pdf-doc .reveal { opacity: 1 !important; transform: none !important; }
   .pdf-doc a { text-decoration: none; }
 `;
@@ -83,22 +82,30 @@ async function run() {
   const { port } = server.address();
   const base = `http://127.0.0.1:${port}/`;
 
+  const navLabels = { home: "Home", projects: "Projects", about: "About", contact: "Contact" };
+  const footers = {
+    home: [["projects", "Projects"], ["about", "About"], ["contact", "Contact"], ["https://github.com/Emin-dev", "GitHub"]],
+    projects: [["home", "Home"], ["about", "About"], ["contact", "Contact"], ["https://github.com/Emin-dev", "GitHub"]],
+    about: [["home", "Home"], ["projects", "Projects"], ["contact", "Contact"], ["https://github.com/Emin-dev", "GitHub"]],
+    contact: [["home", "Home"], ["projects", "Projects"], ["about", "About"], ["https://github.com/Emin-dev", "GitHub"]]
+  };
   const sections = [];
   for (const page of pages) {
     const html = await readFile(join(root, page.file), "utf8");
-    sections.push(`<section class="pdf-doc" id="${page.key}">\n${rewriteLinks(mainOf(html, page.file))}\n</section>`);
+    const nav = pages.map((item) => {
+      const current = item.key === page.key ? ' aria-current="page"' : "";
+      return `<a href="#${item.key}"${current}>${navLabels[item.key]}</a>`;
+    }).join("");
+    const footerLinks = footers[page.key].map(([href, text]) => {
+      const link = href.startsWith("http") ? href : `#${href}`;
+      return `<a href="${link}">${text}</a>`;
+    }).join("");
+    sections.push(`<section class="pdf-doc" id="${page.key}">
+<header class="pdf-nav"><span class="pdf-nav-brand"><svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="9" fill="#161f39"/><path fill="#f5f5f7" d="M25.096 30c-.072 0-.12-.048-.168-.12-4.776-6.384-12.216-10.8-20.736-11.688C4.048 18.168 4 18.096 4 18s.048-.168.192-.192c8.52-.888 15.96-5.304 20.736-11.688.048-.072.096-.12.168-.12s.096.024.168.072A15.02 15.02 0 0 1 31.12 18a15.02 15.02 0 0 1-5.856 11.928c-.072.048-.096.072-.168.072"/></svg>Emin İsmayılov</span><nav aria-label="PDF pages">${nav}</nav><span class="pdf-theme" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></header>
+${rewriteLinks(mainOf(html, page.file))}
+<footer class="pdf-foot"><p>© 2026 Emin İsmayılov</p><nav aria-label="PDF footer">${footerLinks}</nav></footer>
+</section>`);
   }
-
-  const contents = `<footer class="pdf-toc">
-    <span class="eyebrow">Portfolio</span>
-    <div class="pdf-toc-links">
-      <a href="#home">Home</a>
-      <a href="#projects">Projects</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-    </div>
-    <p>eminpromax@icloud.com · github.com/Emin-dev · Baku, Azerbaijan</p>
-  </footer>`;
 
   const document = `<!doctype html>
 <html lang="en" data-theme="light">
@@ -109,7 +116,7 @@ async function run() {
   <link rel="stylesheet" href="assets/css/site.css">
   <style>${extraPrintCss}</style>
 </head>
-<body>${sections.join("\n")}${contents}</body>
+<body>${sections.join("\n")}</body>
 </html>`;
 
   const browser = await chromium.launch({
