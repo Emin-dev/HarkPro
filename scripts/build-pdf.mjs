@@ -7,8 +7,7 @@ const root = resolve(process.cwd());
 const pages = [
   { file: "index.html", key: "home" },
   { file: "projects.html", key: "projects" },
-  { file: "about.html", key: "about" },
-  { file: "contact.html", key: "contact" }
+  { file: "about.html", key: "about" }
 ];
 
 const types = {
@@ -62,7 +61,6 @@ function rewriteLinks(html) {
     }
     if (pathPart === "projects.html" || pathPart === "./projects.html") return `href="${target || "#projects"}"`;
     if (pathPart === "about.html" || pathPart === "./about.html") return `href="${target || "#about"}"`;
-    if (pathPart === "contact.html" || pathPart === "./contact.html") return `href="${target || "#contact"}"`;
     if (pathPart === "portfolio.pdf") return 'href="https://emin-dev.github.io/HarkPro/portfolio.pdf"';
     return full;
   });
@@ -82,12 +80,11 @@ async function run() {
   const { port } = server.address();
   const base = `http://127.0.0.1:${port}/`;
 
-  const navLabels = { home: "Home", projects: "Projects", about: "About", contact: "Contact" };
+  const navLabels = { home: "Home", projects: "Projects", about: "About" };
   const footers = {
-    home: [["projects", "Projects"], ["about", "About"], ["contact", "Contact"], ["https://github.com/Emin-dev", "GitHub"]],
-    projects: [["home", "Home"], ["about", "About"], ["contact", "Contact"], ["https://github.com/Emin-dev", "GitHub"]],
-    about: [["home", "Home"], ["projects", "Projects"], ["contact", "Contact"], ["https://github.com/Emin-dev", "GitHub"]],
-    contact: [["home", "Home"], ["projects", "Projects"], ["about", "About"], ["https://github.com/Emin-dev", "GitHub"]]
+    home: [["projects", "Projects"], ["about", "About"], ["https://github.com/Emin-dev", "GitHub"]],
+    projects: [["home", "Home"], ["about", "About"], ["https://github.com/Emin-dev", "GitHub"]],
+    about: [["home", "Home"], ["projects", "Projects"], ["https://github.com/Emin-dev", "GitHub"]]
   };
   const sections = [];
   for (const page of pages) {

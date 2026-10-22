@@ -4,7 +4,7 @@ import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize, resolve } from "node:path";
 
 const root = resolve(process.cwd());
-const basePages = ["index.html", "projects.html", "about.html", "contact.html"];
+const basePages = ["index.html", "projects.html", "about.html"];
 const failures = [];
 
 const forbidden = [
@@ -26,7 +26,13 @@ const forbidden = [
   "cozy " + "nook",
   "quiet " + "tiles",
   "rule" + "shift",
-  "scriver"
+  "scriver",
+  "eminpromax",
+  "linkedin",
+  "mailto:",
+  "tel:",
+  "vercel",
+  "contact"
 ];
 
 const types = {
@@ -66,8 +72,19 @@ function check(condition, message) {
   if (!condition) failures.push(message);
 }
 
+function allowedExternal(href) {
+  try {
+    const url = new URL(href);
+    if (url.protocol !== "https:") return false;
+    if (url.hostname === "github.com") return /^\/Emin-dev(?:\/|$)/.test(url.pathname);
+    if (url.hostname === "emin-dev.github.io") return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 async function checkExternal(url) {
-  if (url.includes("linkedin.com")) return;
   try {
     const response = await fetch(url, {
       redirect: "follow",
@@ -96,13 +113,13 @@ async function run() {
     }
   }
 
-  const contactHtml = await readFile(join(root, "contact.html"), "utf8");
-  const contactHrefs = [...contactHtml.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
-  for (const href of contactHrefs) {
-    if (href.startsWith("mailto:") || href.startsWith("https://github.com/Emin-dev") || href.includes("linkedin.com")) continue;
-    if (href.endsWith(".html") || href.includes(".html#") || href === "portfolio.pdf" || href === "favicon.svg" || href.startsWith("#") || href.startsWith("assets/")) continue;
-    failures.push(`contact.html: unexpected contact link ${href}`);
-  }
+  try {
+    await stat(join(root, "contact.html"));
+    failures.push("contact.html must not exist");
+  } catch {}
+
+  const sitemap = await readFile(join(root, "sitemap.xml"), "utf8");
+  check(!sitemap.toLowerCase().includes("contact"), "sitemap.xml: contact page must not be listed");
 
   const server = await startServer();
   const { port } = server.address();
@@ -173,6 +190,7 @@ async function run() {
             continue;
           }
           if (href.startsWith("http://") || href.startsWith("https://")) {
+            check(allowedExternal(href), `${file}: external link not allowed ${href}`);
             externalLinks.add(href);
             continue;
           }
@@ -203,7 +221,7 @@ async function run() {
     process.exitCode = 1;
     return;
   }
-  console.log(`PASS: 4 pages, 2 viewports, light/dark, no console errors, no overflow, links ok, ${downloadButtons} PDF buttons, ${externalLinks.size} external links`);
+  console.log(`PASS: 3 pages, 2 viewports, light/dark, no console errors, no overflow, links ok, ${downloadButtons} PDF buttons, ${externalLinks.size} external links`);
 }
 
 run().catch((error) => {

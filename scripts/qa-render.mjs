@@ -6,8 +6,8 @@ import { extname, join, normalize, resolve } from "node:path";
 
 const root = resolve(process.cwd());
 const outDir = join(root, "docs", "qa");
-const pages = ["index.html", "projects.html", "about.html", "contact.html"];
-const names = { "index.html": "home", "projects.html": "projects", "about.html": "about", "contact.html": "contact" };
+const pages = ["index.html", "projects.html", "about.html"];
+const names = { "index.html": "home", "projects.html": "projects", "about.html": "about" };
 const viewports = [
   { label: "1440", width: 1440, height: 900 },
   { label: "390", width: 390, height: 844 }
@@ -132,8 +132,8 @@ async function run() {
   const pdfFiles = (await readdir(outDir))
     .filter((file) => /^pdf-page-\d+\.png$/.test(file))
     .sort();
-  if (pdfFiles.length !== 4) {
-    throw new Error(`expected 4 PDF page PNGs, rendered ${pdfFiles.length}`);
+  if (pdfFiles.length !== 3) {
+    throw new Error(`expected 3 PDF page PNGs, rendered ${pdfFiles.length}`);
   }
   for (const file of pdfFiles) {
     const info = await stat(join(outDir, file));

@@ -106,11 +106,14 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           base="https://emin-dev.github.io/HarkPro"
-          for path in "" "projects.html" "about.html" "contact.html"; do
+          for path in "" "projects.html" "about.html"; do
             code="$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 30 "$base/$path")"
             echo "$code /$path"
             test "$code" = "200"
           done
+          code="$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 30 "$base/contact.html")"
+          echo "$code /contact.html"
+          test "$code" = "404"
           ok=0
           for i in $(seq 1 12); do
             if curl -fsSL --max-time 30 "$base/portfolio.pdf" -o /tmp/live-portfolio.pdf && python scripts/verify-pdf.py /tmp/live-portfolio.pdf; then
@@ -120,5 +123,19 @@ jobs:
             sleep 5
           done
           test "$ok" = "1"
+          for path in "" "projects.html" "about.html"; do
+            if curl -fsSL --max-time 30 "$base/$path" | grep -qiE 'eminpromax|linkedin|mailto:|tel:|vercel|contact'; then
+              echo "Forbidden text found on live /$path"
+              exit 1
+            fi
+          done
+          if curl -fsSL --max-time 30 "$base/sitemap.xml" | grep -qi 'contact'; then
+            echo "Forbidden contact entry found in live sitemap.xml"
+            exit 1
+          fi
+          if pdftotext /tmp/live-portfolio.pdf - | grep -qiE 'eminpromax|linkedin|mailto:|tel:|vercel|contact'; then
+            echo "Forbidden text found in live portfolio.pdf"
+            exit 1
+          fi
           curl -fsSL --max-time 30 "$base/projects.html" | grep -q "Public work"
           echo "Live site and PDF verified"

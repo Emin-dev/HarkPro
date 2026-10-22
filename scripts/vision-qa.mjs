@@ -14,12 +14,11 @@ const candidates = [
   "opencode"
 ].filter(Boolean);
 
-const pages = ["home", "projects", "about", "contact"];
+const pages = ["home", "projects", "about"];
 const labels = {
   home: ["desktop 1440 light", "desktop 1440 dark", "mobile 390 light", "mobile 390 dark"],
   projects: ["desktop 1440 light", "desktop 1440 dark", "mobile 390 light", "mobile 390 dark"],
-  about: ["desktop 1440 light", "desktop 1440 dark", "mobile 390 light", "mobile 390 dark"],
-  contact: ["desktop 1440 light", "desktop 1440 dark", "mobile 390 light", "mobile 390 dark"]
+  about: ["desktop 1440 light", "desktop 1440 dark", "mobile 390 light", "mobile 390 dark"]
 };
 
 function findOpencode() {
@@ -143,7 +142,7 @@ async function main() {
         ...sources.map((source, index) => `${index + 1}. ${source.includes("/pdf-page-") ? "PDF page" : labels[page][index]} — ${source.split("/").pop()}`),
         "",
         "Check for: overlapping or clipped text, cut-off tiles, content beyond the viewport, blank or nearly blank pages, broken or missing images, low-contrast or unreadable text, inconsistent spacing, horizontal scrolling, dark/light inconsistency, and the PDF not matching the website's fonts, colors, tile layout or content.",
-        "Judge only visible pixels. Be strict, but do not invent issues. Text may reflow differently in the PDF because A4 is narrower; only flag it if text overlaps or is clipped. The PDF nav includes the brand logo and a static theme icon. Treat generous whitespace on a short Contact page as intentional unless the page is blank or content is clipped. Do not use tools.",
+        "Judge only visible pixels. Be strict, but do not invent issues. Text may reflow differently in the PDF because A4 is narrower; only flag it if text overlaps or is clipped. The PDF nav includes the brand logo and a static theme icon. Treat generous whitespace on a short About page as intentional unless the page is blank or content is clipped. Do not use tools.",
         "Reply with exactly one line: CLEAN",
         "or: ISSUES: <short semicolon-separated list, each item starting with the image number>",
         "Do not add any other text."
@@ -200,7 +199,7 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  console.log(`PASS: vision QA clean for ${pages.length} site pages and 4 PDF pages`);
+  console.log(`PASS: vision QA clean for ${pages.length} site pages and 3 PDF pages`);
 }
 
 main().catch(async (error) => {

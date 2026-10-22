@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the generated portfolio PDF contains four pages and clickable links."""
+"""Verify the generated portfolio PDF contains three pages and clickable links."""
 from __future__ import annotations
 
 import sys
@@ -21,8 +21,8 @@ def main() -> None:
         fail("portfolio.pdf is unexpectedly small")
 
     reader = PdfReader(str(pdf_path))
-    if len(reader.pages) != 4:
-        fail(f"expected exactly 4 PDF pages (one per section), found {len(reader.pages)}")
+    if len(reader.pages) != 3:
+        fail(f"expected exactly 3 PDF pages (one per section), found {len(reader.pages)}")
 
     page_texts = [" ".join((page.extract_text() or "").split()) for page in reader.pages]
     normalized = [text.lower() for text in page_texts]
@@ -30,8 +30,7 @@ def main() -> None:
     markers = {
         0: ["home", "emin", "built in the open", "dot", "accessproof", "locale"],
         1: ["projects", "public work", "dot", "accessproof", "locale", "qwen"],
-        2: ["about", "public by default", "113 public repositories", "local-first", "toolbox"],
-        3: ["contact", "say hello", "eminpromax@icloud.com", "linkedin", "github"],
+        2: ["about", "public by default", "113 public repositories", "local-first", "toolbox", "download pdf"],
     }
     for index, needles in markers.items():
         if len(page_texts[index]) < 120:
@@ -47,6 +46,14 @@ def main() -> None:
         "crowd" + "funding",
         "mecha" + "tronics",
         "scrum " + "master",
+        "eminpromax",
+        "linkedin",
+        "mailto:",
+        "tel:",
+        "vercel",
+        "contact",
+        "m5 pro",
+        "48 gb",
     ]
     joined = " ".join(normalized)
     for needle in forbidden:
@@ -72,9 +79,9 @@ def main() -> None:
                 external += 1
                 external_uris.add(str(action["/URI"]))
 
-    if internal < 12:
+    if internal < 10:
         fail(f"expected clickable internal page links on every page, found {internal}")
-    if external < 8:
+    if external < 6:
         fail(f"expected clickable external links, found {external}")
 
     known = set(reader.named_destinations.keys())
@@ -87,13 +94,16 @@ def main() -> None:
         "github.com/Emin-dev/Dot",
         "github.com/Emin-dev/accessproof",
         "github.com/Emin-dev/locale",
-        "linkedin.com/in/",
-        "mailto:eminpromax@icloud.com",
+        "emin-dev.github.io/accessproof",
     ]
     joined_uris = " ".join(external_uris)
     for needle in required_external:
         if needle not in joined_uris:
             fail(f"missing clickable external link {needle!r}")
+
+    for needle in ("linkedin", "mailto:", "tel:", "vercel", "eminpromax"):
+        if needle in joined_uris.lower():
+            fail(f"contains forbidden PDF link {needle!r}")
 
     print(
         f"PASS: portfolio.pdf — {len(reader.pages)} pages, "

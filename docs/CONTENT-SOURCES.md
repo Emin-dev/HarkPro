@@ -1,23 +1,22 @@
 # Content sources
 
 Every public statement on the site is checked against Emin's public GitHub account
-(profile, public repositories, READMEs and releases) or one of the three contact
-links the brief explicitly allows. This file records the source for each claim.
-Accessed 2026-10-22.
+(profile, public repositories, READMEs and releases). This file records the source
+for each claim. Accessed 2026-10-22.
 
-## Identity and contact
+## Identity
 
 | Statement | Source |
 | --- | --- |
 | Name “Emin İsmayılov” | HarkPro repository description: <https://github.com/Emin-dev/HarkPro> |
 | “I build useful tools and small games” / public work | Profile bio “Building useful tools and small games. Always experimenting.”: <https://github.com/Emin-dev> |
 | 113 public repositories | Public profile repository count: <https://github.com/Emin-dev> (113 at time of check) |
-| Email `eminpromax@icloud.com` | Contact link explicitly allowed by the brief; also used by the existing `mailto:` link. |
-| LinkedIn `linkedin.com/in/emini%CC%87smay%C4%B1lov` | Contact link explicitly allowed by the brief; existing site link. |
-| GitHub `github.com/Emin-dev` | Contact link explicitly allowed by the brief; public profile. |
+| GitHub `github.com/Emin-dev` | Public profile. |
 
-No location, job title, employer, education, certification, language level,
-private venture, unreleased idea or private note is used anywhere on the site.
+No email, LinkedIn, phone, location, job title, employer, education,
+certification, language level, private venture, unreleased idea or private note
+is used anywhere on the site. The only external links are `github.com/Emin-dev/*`
+and `emin-dev.github.io` pages.
 
 ## Project selection
 
@@ -30,8 +29,8 @@ judged by real substance: working code, README and releases.
    axe-core 4.14.0, unit and Playwright tests, a public GitHub Pages deployment
    and a README that explains scope and isolation. <https://github.com/Emin-dev/accessproof>
 3. **Locale** — second supporting app. Rust core compiled to WebAssembly, a
-   native CLI mode, a static browser UI, checked-in verification evidence, MIT
-   license and a live demo. <https://github.com/Emin-dev/locale>
+   native CLI mode, a static browser UI, checked-in verification evidence and an
+   MIT license. <https://github.com/Emin-dev/locale>
 
 Not selected: Toolbench is a small hub/index with one tool at the time of check;
 the Studio games are smaller JavaScript experiments; the other Rust demos are
@@ -61,7 +60,7 @@ import without a release. They are not mentioned on the site.
 | “Three apps from my public GitHub” | The three repositories below. |
 | Dot: click to talk/interrupt; Whisper; Kokoro; screen context only for the started conversation; Qwen3.8 27B Q4 local | Dot README, “Installed interaction and privacy”: <https://github.com/Emin-dev/Dot/blob/main/README.md> |
 | Dot: screen context never uploaded | Dot README: “Images are bounded, used once, excluded from conversation history, and never uploaded to a remote model.” |
-| Dot: macOS 27+, Apple Silicon M5 Pro class, 48 GB unified memory | Dot README, hardware section. |
+| Dot: macOS 27+, Apple silicon | Dot README, hardware section. |
 | Dot: ad-hoc signed and not notarised | Dot README, install section. |
 | Dot: latest release v1.1.2 | <https://github.com/Emin-dev/Dot/releases/tag/v1.1.2> |
 | AccessProof: vendored axe-core, WCAG A/AA, best-practice advice, overlay signatures, no upload | AccessProof README “What it does”. |
@@ -70,7 +69,7 @@ import without a release. They are not mentioned on the site.
 | AccessProof: live on GitHub Pages | <https://emin-dev.github.io/accessproof/> (HTTP 200, public Pages). |
 | Locale: Rust core, CLI + WebAssembly, coverage/evidence fingerprint decisions, synthetic demo, tab-memory state | Locale README sections “Implemented”, “Honest boundaries” and “Run / build”. |
 | Locale: MIT | Locale repository license. |
-| Locale: live demo | <https://project-refiy.vercel.app/> (HTTP 200, repository homepage). |
+| Locale: source | <https://github.com/Emin-dev/locale> |
 
 ## About
 
@@ -88,13 +87,14 @@ import without a release. They are not mentioned on the site.
 | Toolbox: Swift, Rust, WebAssembly, TypeScript, Python, JavaScript | Public repository languages (for example Dot/Swift, Locale/Rust+WASM, AccessProof/JavaScript, deepdesk/Python, nextjs-gemini/TypeScript): <https://github.com/Emin-dev?tab=repositories> |
 | Dot and Locale are MIT-licensed | Repository license files. |
 
-## Contact
+## PDF
 
-Email, GitHub and LinkedIn cards only, with the two site-wide Download PDF
-controls required by the brief. The contact lede names those three allowed
-channels. No location, phone, employer or other contact channel appears.
+The two site-wide Download PDF controls required by the brief sit at the top of
+Home and the bottom of About. The PDF contains Home, Projects and About only.
+No email, LinkedIn, phone, location, employer or other contact channel appears.
 
 ## Removed from the previous revision
 
-All claims that were not supported by the selected public GitHub sources, and
-all out-of-scope ideas and private material, were removed from the site.
+All claims that were not supported by the selected public GitHub sources, all
+contact details and personal accounts, and all out-of-scope ideas and private
+material were removed from the site.
