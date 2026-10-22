@@ -1,5 +1,5 @@
 {
-  "pdfBytes": 719597,
+  "pdfBytes": 714906,
   "entries": [
     {
       "kind": "site",
@@ -7,7 +7,7 @@
       "viewport": "1440",
       "theme": "light",
       "file": "site-home-1440-light.png",
-      "bytes": 347003
+      "bytes": 347157
     },
     {
       "kind": "site",
@@ -15,7 +15,7 @@
       "viewport": "1440",
       "theme": "dark",
       "file": "site-home-1440-dark.png",
-      "bytes": 363281
+      "bytes": 363964
     },
     {
       "kind": "site",
@@ -23,7 +23,7 @@
       "viewport": "390",
       "theme": "light",
       "file": "site-home-390-light.png",
-      "bytes": 236345
+      "bytes": 236190
     },
     {
       "kind": "site",
@@ -31,7 +31,7 @@
       "viewport": "390",
       "theme": "dark",
       "file": "site-home-390-dark.png",
-      "bytes": 249342
+      "bytes": 249544
     },
     {
       "kind": "site",
@@ -39,7 +39,7 @@
       "viewport": "1440",
       "theme": "light",
       "file": "site-projects-1440-light.png",
-      "bytes": 256981
+      "bytes": 257298
     },
     {
       "kind": "site",
@@ -47,7 +47,7 @@
       "viewport": "1440",
       "theme": "dark",
       "file": "site-projects-1440-dark.png",
-      "bytes": 274518
+      "bytes": 275072
     },
     {
       "kind": "site",
@@ -55,7 +55,7 @@
       "viewport": "390",
       "theme": "light",
       "file": "site-projects-390-light.png",
-      "bytes": 198544
+      "bytes": 198416
     },
     {
       "kind": "site",
@@ -63,7 +63,7 @@
       "viewport": "390",
       "theme": "dark",
       "file": "site-projects-390-dark.png",
-      "bytes": 212730
+      "bytes": 212566
     },
     {
       "kind": "site",
@@ -71,7 +71,7 @@
       "viewport": "1440",
       "theme": "light",
       "file": "site-about-1440-light.png",
-      "bytes": 172209
+      "bytes": 172573
     },
     {
       "kind": "site",
@@ -79,7 +79,7 @@
       "viewport": "1440",
       "theme": "dark",
       "file": "site-about-1440-dark.png",
-      "bytes": 191703
+      "bytes": 192697
     },
     {
       "kind": "site",
@@ -87,7 +87,7 @@
       "viewport": "390",
       "theme": "light",
       "file": "site-about-390-light.png",
-      "bytes": 133546
+      "bytes": 133666
     },
     {
       "kind": "site",
@@ -95,7 +95,7 @@
       "viewport": "390",
       "theme": "dark",
       "file": "site-about-390-dark.png",
-      "bytes": 147417
+      "bytes": 147198
     },
     {
       "kind": "site",
@@ -103,7 +103,7 @@
       "viewport": "1440",
       "theme": "light",
       "file": "site-contact-1440-light.png",
-      "bytes": 134129
+      "bytes": 134386
     },
     {
       "kind": "site",
@@ -111,7 +111,7 @@
       "viewport": "1440",
       "theme": "dark",
       "file": "site-contact-1440-dark.png",
-      "bytes": 153425
+      "bytes": 154520
     },
     {
       "kind": "site",
@@ -119,7 +119,7 @@
       "viewport": "390",
       "theme": "light",
       "file": "site-contact-390-light.png",
-      "bytes": 100092
+      "bytes": 99951
     },
     {
       "kind": "site",
@@ -127,19 +127,19 @@
       "viewport": "390",
       "theme": "dark",
       "file": "site-contact-390-dark.png",
-      "bytes": 112522
+      "bytes": 112720
     },
     {
       "kind": "pdf",
       "page": "1",
       "file": "pdf-page-1.png",
-      "bytes": 199993
+      "bytes": 200143
     },
     {
       "kind": "pdf",
       "page": "2",
       "file": "pdf-page-2.png",
-      "bytes": 188233
+      "bytes": 188279
     },
     {
       "kind": "pdf",
