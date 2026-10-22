@@ -1,16 +1,109 @@
 #!/usr/bin/env python3
-"""Verify the generated portfolio PDF contains three pages and clickable links."""
+"""Verify the generated portfolio PDF: 3 designed pages, readable text, no overflow."""
 from __future__ import annotations
 
+import re
+import subprocess
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from pypdf import PdfReader
+
+# A4 content box: 16 mm side/top margins, 15 mm bottom margin.
+MM = 72 / 25.4
+LEFT = 16 * MM
+RIGHT = 16 * MM
+TOP = 16 * MM
+BOTTOM = 15 * MM
+TOLERANCE = 1.0 * MM
+MIN_FONT_PT = 9.0
 
 
 def fail(message: str) -> None:
     print(f"FAIL: {message}")
     raise SystemExit(1)
+
+
+def font_sizes(page) -> list[tuple[float, str]]:
+    sizes: list[tuple[float, str]] = []
+
+    def visit(text, cm, tm, font_dict, font_size):
+        value = text.strip()
+        if value:
+            sizes.append((float(font_size), value[:40]))
+
+    page.extract_text(visitor_text=visit)
+    return sizes
+
+
+def bbox_overflow(pdf_path: Path) -> list[str]:
+    try:
+        result = subprocess.run(
+            ["pdftotext", "-bbox-layout", str(pdf_path), "-"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+    except FileNotFoundError:
+        return ["pdftotext is not installed, cannot check text overflow"]
+    except subprocess.CalledProcessError as error:
+        return [f"pdftotext failed: {error.stderr.strip()}"]
+
+    problems: list[str] = []
+    root = ET.fromstring(result.stdout)
+    for index, page in enumerate(
+        (node for node in root.iter() if node.tag.rsplit("}", 1)[-1] == "page"), start=1
+    ):
+        width = float(page.get("width", "0"))
+        height = float(page.get("height", "0"))
+        for word in (node for node in page.iter() if node.tag.rsplit("}", 1)[-1] == "word"):
+            text = (word.text or "").strip()
+            if not text:
+                continue
+            x_min = float(word.get("xMin", "0"))
+            x_max = float(word.get("xMax", "0"))
+            y_min = float(word.get("yMin", "0"))
+            y_max = float(word.get("yMax", "0"))
+            if (
+                x_min < LEFT - TOLERANCE
+                or x_max > width - RIGHT + TOLERANCE
+                or y_min < TOP - TOLERANCE
+                or y_max > height - BOTTOM + TOLERANCE
+            ):
+                problems.append(
+                    f"page {index}: text {text!r} is outside the safe area "
+                    f"({x_min:.1f},{y_min:.1f})-({x_max:.1f},{y_max:.1f})"
+                )
+    return problems
+
+
+def embedded_fonts(pdf_path: Path) -> list[str]:
+    try:
+        result = subprocess.run(
+            ["pdffonts", str(pdf_path)],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+    except FileNotFoundError:
+        return ["pdffonts is not installed, cannot check embedded fonts"]
+    except subprocess.CalledProcessError as error:
+        return [f"pdffonts failed: {error.stderr.strip()}"]
+
+    problems: list[str] = []
+    for line in result.stdout.splitlines()[2:]:
+        if not line.strip():
+            continue
+        parts = line.split()
+        if len(parts) < 5:
+            continue
+        embedded = parts[-5]
+        if embedded.lower() != "yes":
+            problems.append(f"font is not embedded: {parts[0]}")
+    return problems
 
 
 def main() -> None:
@@ -28,16 +121,31 @@ def main() -> None:
     normalized = [text.lower() for text in page_texts]
 
     markers = {
-        0: ["home", "emin", "built in the open", "dot", "accessproof", "locale"],
-        1: ["projects", "public work", "dot", "accessproof", "locale", "qwen"],
-        2: ["about", "public by default", "113 public repositories", "local-first", "toolbox", "download pdf"],
+        0: ["emin", "built in the open", "dot", "accessproof", "locale", "at a glance"],
+        1: ["public work", "dot", "accessproof", "locale", "qwen", "shipped"],
+        2: ["about", "public by default", "113 public repositories", "local-first", "toolbox"],
     }
     for index, needles in markers.items():
         if len(page_texts[index]) < 120:
             fail(f"page {index + 1}: looks blank or too short ({len(page_texts[index])} chars)")
+        if not page_texts[index].startswith("Emin İsmayılov"):
+            fail(f"page {index + 1}: does not start with the name-only header")
         for needle in needles:
             if needle not in normalized[index]:
                 fail(f"page {index + 1}: missing text marker {needle!r}")
+
+    for index, page in enumerate(reader.pages, start=1):
+        sizes = font_sizes(page)
+        if not sizes:
+            fail(f"page {index}: no selectable text found")
+        smallest, sample = min(sizes)
+        if smallest < MIN_FONT_PT - 0.1:
+            fail(f"page {index}: {smallest:.1f}pt text is below {MIN_FONT_PT}pt ({sample!r})")
+
+    for problem in bbox_overflow(pdf_path):
+        fail(problem)
+    for problem in embedded_fonts(pdf_path):
+        fail(problem)
 
     forbidden = [
         "rent" + "butik",
@@ -54,6 +162,7 @@ def main() -> None:
         "contact",
         "m5 pro",
         "48 gb",
+        "download pdf",
     ]
     joined = " ".join(normalized)
     for needle in forbidden:
@@ -79,8 +188,8 @@ def main() -> None:
                 external += 1
                 external_uris.add(str(action["/URI"]))
 
-    if internal < 10:
-        fail(f"expected clickable internal page links on every page, found {internal}")
+    if internal < 3:
+        fail(f"expected clickable internal page links, found {internal}")
     if external < 6:
         fail(f"expected clickable external links, found {external}")
 
@@ -105,9 +214,13 @@ def main() -> None:
         if needle in joined_uris.lower():
             fail(f"contains forbidden PDF link {needle!r}")
 
+    smallest = min(
+        (min(size for size, _ in font_sizes(page)) for page in reader.pages),
+        default=0,
+    )
     print(
-        f"PASS: portfolio.pdf — {len(reader.pages)} pages, "
-        f"{internal} internal link annotations, {external} external link annotations"
+        f"PASS: portfolio.pdf — {len(reader.pages)} pages, min font {smallest:.1f}pt, "
+        f"{internal} internal links, {external} external links, fonts embedded, no overflow"
     )
 
 

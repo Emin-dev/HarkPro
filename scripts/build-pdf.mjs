@@ -1,6 +1,6 @@
 import { chromium } from "playwright";
 import { createServer } from "node:http";
-import { readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { extname, join, normalize, resolve } from "node:path";
 
 const root = resolve(process.cwd());
@@ -16,11 +16,14 @@ const types = {
   ".js": "text/javascript; charset=utf-8",
   ".svg": "image/svg+xml",
   ".woff2": "font/woff2",
+  ".ttf": "font/ttf",
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".webp": "image/webp",
   ".pdf": "application/pdf"
 };
+
+const logo = '<svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="9" fill="#161f39"/><path fill="#f5f5f7" d="M25.096 30c-.072 0-.12-.048-.168-.12-4.776-6.384-12.216-10.8-20.736-11.688C4.048 18.168 4 18.096 4 18s.048-.168.192-.192c8.52-.888 15.96-5.304 20.736-11.688.048-.072.096-.12.168-.12s.096.024.168.072A15.02 15.02 0 0 1 31.12 18a15.02 15.02 0 0 1-5.856 11.928c-.072.048-.096.072-.168.072"/></svg>';
 
 function startServer() {
   return new Promise((resolveServer) => {
@@ -34,7 +37,7 @@ function startServer() {
         const body = await readFile(file);
         response.writeHead(200, { "content-type": types[extname(file)] || "application/octet-stream" });
         response.end(body);
-      } catch (error) {
+      } catch {
         response.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
         response.end("not found");
       }
@@ -66,52 +69,86 @@ function rewriteLinks(html) {
   });
 }
 
-const extraPrintCss = `
-  .pdf-doc { padding-top: 2mm; }
-  .pdf-doc + .pdf-doc { margin-top: 0; }
-  .pdf-doc .page-head { padding-top: 4mm; }
-  .pdf-doc .hero { min-height: 0; }
-  .pdf-doc .reveal { opacity: 1 !important; transform: none !important; }
-  .pdf-doc a { text-decoration: none; }
-`;
+async function audit(page) {
+  return page.evaluate(() => {
+    const minPt = 9;
+    const minPx = minPt * (96 / 72) - 0.6;
+    const violations = [];
+    const docs = Array.from(document.querySelectorAll(".pdf-doc"));
+
+    for (const doc of docs) {
+      const id = doc.id || "page";
+      if (doc.scrollHeight > doc.clientHeight + 1) {
+        violations.push(`${id}: content is ${doc.scrollHeight - doc.clientHeight}px taller than the A4 page`);
+      }
+      if (doc.scrollWidth > doc.clientWidth + 1) {
+        violations.push(`${id}: content is ${doc.scrollWidth - doc.clientWidth}px wider than the A4 page`);
+      }
+
+      const docRect = doc.getBoundingClientRect();
+      for (const element of doc.querySelectorAll("body *")) {
+        const style = getComputedStyle(element);
+        if (style.display === "none" || style.visibility === "hidden") continue;
+        const rect = element.getBoundingClientRect();
+        if (!rect.width && !rect.height) continue;
+
+        const hasText = Array.from(element.childNodes).some(
+          (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0
+        );
+        if (hasText) {
+          const px = parseFloat(style.fontSize);
+          if (px < minPx) {
+            const label = element.textContent.replace(/\s+/g, " ").trim().slice(0, 40);
+            violations.push(`${id}: ${px.toFixed(1)}px text (minimum ${minPt}pt): "${label}"`);
+          }
+          if (element.scrollWidth > element.clientWidth + 1 && style.overflow !== "visible") {
+            violations.push(`${id}: clipped text in "${element.textContent.replace(/\s+/g, " ").trim().slice(0, 40)}"`);
+          }
+        }
+
+        if (rect.right > docRect.right + 1 || rect.bottom > docRect.bottom + 1) {
+          violations.push(`${id}: <${element.tagName.toLowerCase()} class="${element.className}"> overflows the page box (right ${Math.round(rect.right)}/${Math.round(docRect.right)}, bottom ${Math.round(rect.bottom)}/${Math.round(docRect.bottom)})`);
+        }
+      }
+
+      for (const tile of doc.querySelectorAll(".tile")) {
+        if (tile.scrollHeight > tile.clientHeight + 1 || tile.scrollWidth > tile.clientWidth + 1) {
+          const label = tile.className.replace(/\s+/g, ".");
+          violations.push(`${id}: tile ${label} is clipping its content (${tile.scrollHeight - tile.clientHeight}px tall)`);
+        }
+      }
+
+      if (doc.textContent.toLowerCase().includes("download pdf")) {
+        violations.push(`${id}: still contains a Download PDF control`);
+      }
+    }
+
+    return { violations: [...new Set(violations)] };
+  });
+}
 
 async function run() {
   const server = await startServer();
   const { port } = server.address();
   const base = `http://127.0.0.1:${port}/`;
 
-  const navLabels = { home: "Home", projects: "Projects", about: "About" };
-  const footers = {
-    home: [["projects", "Projects"], ["about", "About"], ["https://github.com/Emin-dev", "GitHub"]],
-    projects: [["home", "Home"], ["about", "About"], ["https://github.com/Emin-dev", "GitHub"]],
-    about: [["home", "Home"], ["projects", "Projects"], ["https://github.com/Emin-dev", "GitHub"]]
-  };
   const sections = [];
   for (const page of pages) {
     const html = await readFile(join(root, page.file), "utf8");
-    const nav = pages.map((item) => {
-      const current = item.key === page.key ? ' aria-current="page"' : "";
-      return `<a href="#${item.key}"${current}>${navLabels[item.key]}</a>`;
-    }).join("");
-    const footerLinks = footers[page.key].map(([href, text]) => {
-      const link = href.startsWith("http") ? href : `#${href}`;
-      return `<a href="${link}">${text}</a>`;
-    }).join("");
-    sections.push(`<section class="pdf-doc" id="${page.key}">
-<header class="pdf-nav"><span class="pdf-nav-brand"><svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="9" fill="#161f39"/><path fill="#f5f5f7" d="M25.096 30c-.072 0-.12-.048-.168-.12-4.776-6.384-12.216-10.8-20.736-11.688C4.048 18.168 4 18.096 4 18s.048-.168.192-.192c8.52-.888 15.96-5.304 20.736-11.688.048-.072.096-.12.168-.12s.096.024.168.072A15.02 15.02 0 0 1 31.12 18a15.02 15.02 0 0 1-5.856 11.928c-.072.048-.096.072-.168.072"/></svg>Emin İsmayılov</span><nav aria-label="PDF pages">${nav}</nav><span class="pdf-theme" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></header>
-${rewriteLinks(mainOf(html, page.file))}
-<footer class="pdf-foot"><p>© 2026 Emin İsmayılov</p><nav aria-label="PDF footer">${footerLinks}</nav></footer>
+    sections.push(`<section class="pdf-doc pdf-doc--${page.key}" id="${page.key}">
+<header class="pdf-head">${logo}<span>Emin İsmayılov</span></header>
+<div class="pdf-body">${rewriteLinks(mainOf(html, page.file))}</div>
 </section>`);
   }
 
   const document = `<!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <base href="${base}">
   <title>Emin İsmayılov — Portfolio</title>
   <link rel="stylesheet" href="assets/css/site.css">
-  <style>${extraPrintCss}</style>
+  <link rel="stylesheet" href="assets/css/pdf.css">
 </head>
 <body>${sections.join("\n")}</body>
 </html>`;
@@ -119,11 +156,25 @@ ${rewriteLinks(mainOf(html, page.file))}
   const browser = await chromium.launch({
     executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined
   });
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, colorScheme: "light" });
+  const page = await browser.newPage({ viewport: { width: 673, height: 1006 }, colorScheme: "light" });
   await page.emulateMedia({ media: "print", colorScheme: "light" });
   await page.setContent(document, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts && document.fonts.ready);
+  await page.evaluate(() => {
+    document.querySelectorAll(".pdf-btn, .pdf-cta").forEach((node) => node.remove());
+  });
   await page.waitForTimeout(300);
+
+  const report = await audit(page);
+  await mkdir(join(root, "docs", "qa"), { recursive: true });
+  await writeFile(join(root, "docs", "qa", "pdf-layout.json"), `${JSON.stringify(report, null, 2)}\n`);
+  if (report.violations.length) {
+    console.error("PDF layout check failed:");
+    for (const violation of report.violations) console.error(` - ${violation}`);
+    await browser.close();
+    server.close();
+    throw new Error(`${report.violations.length} layout problem(s)`);
+  }
 
   const pdf = await page.pdf({
     format: "A4",
@@ -139,7 +190,7 @@ ${rewriteLinks(mainOf(html, page.file))}
   const bytes = pdf.byteLength;
   await browser.close();
   server.close();
-  console.log(`Wrote portfolio.pdf (${bytes} bytes, ${title})`);
+  console.log(`Wrote portfolio.pdf (${bytes} bytes, ${title}); layout check clean`);
 }
 
 run().catch((error) => {

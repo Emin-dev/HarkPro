@@ -141,11 +141,37 @@ async function run() {
     entries.push({ kind: "pdf", page: file.replace(/^pdf-page-|\.png$/g, ""), file, bytes: info.size });
   }
 
+  const compareNames = ["home", "projects", "about"];
+  for (let index = 0; index < pdfFiles.length; index += 1) {
+    const name = compareNames[index];
+    const file = `compare-${name}.png`;
+    const result = spawnSync(
+      "python3",
+      [
+        join(root, "scripts", "compare-pages.py"),
+        join(outDir, `site-${name}-1440-light.png`),
+        join(outDir, pdfFiles[index]),
+        join(outDir, file),
+        `${name} at 1440 light`
+      ],
+      { encoding: "utf8" }
+    );
+    if (result.status !== 0) {
+      throw new Error(`compare-pages.py failed: ${result.stderr || result.stdout}`);
+    }
+    const info = await stat(join(outDir, file));
+    if (info.size < 20_000) throw new Error(`${file} looks blank (${info.size} bytes)`);
+    entries.push({ kind: "compare", page: name, file, bytes: info.size });
+  }
+
   await writeFile(
     join(outDir, "manifest.json"),
     `${JSON.stringify({ pdfBytes: pdfStat.size, entries }, null, 2)}\n`
   );
-  console.log(`Wrote ${entries.filter((entry) => entry.kind === "site").length} site screenshots, ${pdfFiles.length} PDF page PNGs, and assets/img/preview.jpg`);
+  console.log(
+    `Wrote ${entries.filter((entry) => entry.kind === "site").length} site screenshots, ` +
+    `${pdfFiles.length} PDF page PNGs, ${compareNames.length} side-by-side comparisons, and assets/img/preview.jpg`
+  );
 }
 
 run().catch((error) => {

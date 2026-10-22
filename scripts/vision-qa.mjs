@@ -123,31 +123,35 @@ async function main() {
     console.log(`Models: ${models.join(", ")}`);
     const tmp = await mkdtemp(join(tmpdir(), "vision-qa-"));
     for (const page of pages) {
-      const sources = labels[page].map((label, index) => {
-        const theme = index % 2 === 0 ? "light" : "dark";
-        const viewport = index < 2 ? "1440" : "390";
-        return join(qaDir, `site-${page}-${viewport}-${theme}.png`);
-      });
+      const sources = labels[page].map((label, index) => ({
+        file: join(qaDir, `site-${page}-${index < 2 ? "1440" : "390"}-${index % 2 === 0 ? "light" : "dark"}.png`),
+        label,
+        width: index < 2 ? 900 : 320
+      }));
       const pdfIndex = pages.indexOf(page) + 1;
-      sources.push(join(qaDir, `pdf-page-${pdfIndex}.png`));
+      sources.push({ file: join(qaDir, `pdf-page-${pdfIndex}.png`), label: "PDF page", width: 760 });
+      sources.push({
+        file: join(qaDir, `compare-${page}.png`),
+        label: "side-by-side desktop 1440 light vs PDF page",
+        width: 900
+      });
 
-      const missing = sources.filter((image) => !existsSync(image));
+      const missing = sources.filter((source) => !existsSync(source.file)).map((source) => source.file);
       if (missing.length) {
         results.push({ page, ok: false, error: `missing images: ${missing.map((image) => image.replace(root + "/", "")).join(", ")}` });
         continue;
       }
 
-      const images = sources.map((source, index) => {
-        const width = index === 4 ? 900 : index < 2 ? 900 : 320;
-        return downscale(source, join(tmp, `${page}-${index}.png`), width);
-      });
+      const images = sources.map((source, index) =>
+        downscale(source.file, join(tmp, `${page}-${index}.png`), source.width)
+      );
 
       const prompt = [
         "You are a strict visual QA reviewer for a portfolio website. The attached images are, in order:",
-        ...sources.map((source, index) => `${index + 1}. ${source.includes("/pdf-page-") ? "PDF page" : labels[page][index]} — ${source.split("/").pop()}`),
+        ...sources.map((source, index) => `${index + 1}. ${source.label} — ${source.file.split("/").pop()}`),
         "",
         "Check for: overlapping or clipped text, cut-off tiles, content beyond the viewport, blank or nearly blank pages, broken or missing images, low-contrast or unreadable text, inconsistent spacing, horizontal scrolling, dark/light inconsistency, and the PDF not matching the website's fonts, colors, tile layout or content.",
-        "Judge only visible pixels. Be strict, but do not invent issues. Text may reflow differently in the PDF because A4 is narrower; only flag it if text overlaps or is clipped. The PDF nav includes the brand logo and a static theme icon. Treat generous whitespace on a short About page as intentional unless the page is blank or content is clipped. Do not use tools.",
+        "Judge only visible pixels. Be strict, but do not invent issues. Text may reflow differently in the PDF because A4 is narrower; only flag it if text overlaps or is clipped. The final image is a side-by-side desktop/PDF comparison: use it to judge whether the PDF keeps the site's fonts, colors, card style, radii, glass orb, shadows and spacing rhythm. The PDF header should show only the name, with no site navigation, footer or Download PDF button. Treat generous whitespace on a short About page as intentional unless the page is blank or content is clipped. Do not use tools.",
         "Reply with exactly one line: CLEAN",
         "or: ISSUES: <short semicolon-separated list, each item starting with the image number>",
         "Do not add any other text."
@@ -159,7 +163,7 @@ async function main() {
         if (response.ok) break;
         console.log(`${page}: ${model} unavailable (${response.error})`);
       }
-      results.push({ page, sources: sources.map((image) => image.replace(root + "/", "")), ...response });
+      results.push({ page, sources: sources.map((source) => source.file.replace(root + "/", "")), ...response });
       console.log(`${page}: ${response.ok ? `${response.answer} [${response.model}]` : `ERROR ${response.error}`}`);
     }
   }

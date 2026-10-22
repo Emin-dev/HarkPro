@@ -65,6 +65,16 @@ jobs:
           VISION_QA_MODEL: opencode-go/qwen3.8-max
         run: npm run qa
 
+      - name: Upload visual QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-qa
+          path: |
+            portfolio.pdf
+            docs/qa
+          if-no-files-found: warn
+
       - name: Commit PDF and QA evidence
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
