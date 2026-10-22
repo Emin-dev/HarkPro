@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdtemp, writeFile } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -60,7 +60,12 @@ function chooseModels(bin) {
     if (/qwen3\.8-flash$/i.test(name)) chosen.push(name);
   }
   if (!chosen.length) chosen.push(...wanted.slice(0, 2));
-  return [...new Set(chosen)];
+  const unique = [...new Set(chosen)];
+  for (const name of [...unique]) {
+    const bare = name.split("/").pop();
+    if (bare && !unique.includes(bare)) unique.push(bare);
+  }
+  return unique;
 }
 
 function parseAnswer(stdout) {
@@ -171,12 +176,15 @@ async function main() {
   };
 
   if (unavailable) {
+    await rm(join(qaDir, "vision-qa.json"), { force: true });
+    await rm(join(qaDir, "VISION-QA.md"), { force: true });
     await writeFile(join(qaDir, "vision-qa-unavailable.json"), `${JSON.stringify(report, null, 2)}\n`);
     console.log("VISION-QA-NEEDED");
     console.log("PNGs are in docs/qa/. No qwen3.8 vision model could review them here.");
     return;
   }
 
+  await rm(join(qaDir, "vision-qa-unavailable.json"), { force: true });
   await writeFile(join(qaDir, "vision-qa.json"), `${JSON.stringify(report, null, 2)}\n`);
 
   const lines = [
